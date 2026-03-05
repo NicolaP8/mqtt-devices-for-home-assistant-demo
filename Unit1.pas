@@ -1,6 +1,6 @@
 {
   Demo
-  Version 2024.12.15
+  Version 2026.03.04
 }
 {$I+,R+,Q+,H+}
 {$MODE DELPHI}
@@ -16,7 +16,7 @@ Uses
   mqTagScanner, mqText, mqUpdate, mqValve;
 
 Const
-  cfgVersion                  = '2024.12.15';
+  cfgVersion                  = '2026.03.04';
   cfgDeviceName     : string  = 'HADemo';
   cfgDeviceID       : string  = 'hademo';
   cfgSerialNumber : integer = 1;
@@ -825,8 +825,8 @@ begin
   BinarySensor := TMQTTBinarySensor.Create;
   with BinarySensor do begin
     Device := MyDevice;
-    Config[CBinarySensorNames[bsnObjectId]]     := did + '_binarysensor';
-    Config[CBinarySensorNames[bsnUniqueId]]     := Config[CBinarySensorNames[bsnObjectId]];
+    Config[CBinarySensorNames[bsnDefaultEntityId]]     := did + '_binarysensor';
+    Config[CBinarySensorNames[bsnUniqueId]]     := Config[CBinarySensorNames[bsnDefaultEntityId]];
     Config[CBinarySensorNames[bsnName]]         := 'Binary Sensor';
     Config[CBinarySensorNames[bsnDeviceClass]]  := CBinarySensorDeviceClass[bsdcGarageDoor];
     //Config[CBinarySensorNames[bsnIcon]]       := 'mdi:speedometer'; //not necessary if DeviceClass is used (and you like the default)
@@ -846,8 +846,8 @@ begin
   Button := TMQTTButton.Create;
   with Button do begin
     Device := MyDevice;
-    Config[CButtonNames[bnObjectId]]        := did + '_button';
-    Config[CButtonNames[bnUniqueId]]        := Config[CButtonNames[bnObjectId]];
+    Config[CButtonNames[bnDefaultEntityId]] := did + '_button';
+    Config[CButtonNames[bnUniqueId]]        := Config[CButtonNames[bnDefaultEntityId]];
     Config[CButtonNames[bnName]]            := 'Button';
     //Config[CButtonNames[bnCommandTopic]]  := 'set'; //uses default
     Config[CButtonNames[bnDeviceClass]]     := CButtonDeviceClass[bdcIdentify];
@@ -865,8 +865,8 @@ begin
   Cover := TMQTTCover.Create;
   with Cover do begin
     Device := MyDevice;
-    Config[CCoverNames[cnObjectId]]         := did + '_cover';
-    Config[CCoverNames[cnUniqueId]]         := Config[CCoverNames[cnObjectId]];
+    Config[CCoverNames[cnDefaultEntityId]]  := did + '_cover';
+    Config[CCoverNames[cnUniqueId]]         := Config[CCoverNames[cnDefaultEntityId]];
     Config[CCoverNames[cnName]]             := 'Window'; //a window has opening, closing and tilting
     Config[CCoverNames[cnDeviceClass]]      := CCoverDeviceClass[cdcWindow];
     //Config[CCoverNames[cnIcon]]           := 'mdi:speedometer'; //not necessary if DeviceClass is used (and you like the default)
@@ -920,8 +920,8 @@ begin
   Fan := TMQTTFan.Create;
   with Fan do begin
     Device := MyDevice;
-    Config[CFanNames[fnObjectId]]                 := did + '_fan';
-    Config[CFanNames[fnUniqueId]]                 := Config[CFanNames[fnObjectId]];
+    Config[CFanNames[fnDefaultEntityId]]          := did + '_fan';
+    Config[CFanNames[fnUniqueId]]                 := Config[CFanNames[fnDefaultEntityId]];
     Config[CFanNames[fnName]]                     := 'Ventilator';
     Config[CFanNames[fnCommandTopic]]             := 'set';
     Config[CFanNames[fnIcon]]                     := 'mdi:fan';
@@ -961,8 +961,8 @@ begin
   Light := TMQTTLight.Create;
   with Light do begin
     Device := MyDevice;
-    Config[CLightNames[linObjectId]]                := did + '_light';
-    Config[CLightNames[linUniqueId]]                := Config[CLightNames[linObjectId]];
+    Config[CLightNames[linDefaultEntityId]]                := did + '_light';
+    Config[CLightNames[linUniqueId]]                := Config[CLightNames[linDefaultEntityId]];
     Config[CLightNames[linName]]                    := 'Light';
     Config[CLightNames[linBrightnessCommandTopic]]  := 'brightness_set';
     Config[CLightNames[linBrightnessScale]]         := '100';
@@ -986,8 +986,8 @@ begin
   Lock := TMQTTLock.Create;
   with Lock do begin
     Device := MyDevice;
-    Config[CLockNames[lonObjectId]]                := did + '_lock';
-    Config[CLockNames[lonUniqueId]]                := Config[CLockNames[lonObjectId]];
+    Config[CLockNames[lonDefaultEntityId]]         := did + '_lock';
+    Config[CLockNames[lonUniqueId]]                := Config[CLockNames[lonDefaultEntityId]];
     Config[CLockNames[lonName]]                    := 'Lock';
     Config[CLockNames[lonCommandTopic]]            := 'set';
     Config[CLockNames[lonIcon]]                    := 'mdi:lock';
@@ -1006,8 +1006,8 @@ begin
   Sensor := TMQTTSensor.Create;
   with Sensor do begin
     Device := MyDevice;
-    Config[CSensorNames[snObjectId]]                  := did + '_sensor';
-    Config[CSensorNames[snUniqueId]]                  := Config[CSensorNames[snObjectId]];
+    Config[CSensorNames[snDefaultEntityId]]           := did + '_sensor';
+    Config[CSensorNames[snUniqueId]]                  := Config[CSensorNames[snDefaultEntityId]];
     Config[CSensorNames[snName]]                      := 'Sensor';
     Config[CSensorNames[snDeviceClass]]               := CSensorDeviceClass[sdcTemperature];
     Config[CSensorNames[snIcon]]                      := 'hass:thermometer';
@@ -1029,8 +1029,8 @@ begin
   Switch := TMQTTSwitch.Create;
   with Switch do begin
     Device := MyDevice;
-    Config[CSwitchNames[swnObjectId]]     := did + '_relay';
-    Config[CSwitchNames[swnUniqueId]]     := Config[CSwitchNames[swnObjectId]];
+    Config[CSwitchNames[swnDefaultEntityId]]     := did + '_relay';
+    Config[CSwitchNames[swnUniqueId]]     := Config[CSwitchNames[swnDefaultEntityId]];
     Config[CSwitchNames[swnName]]         := 'Switch';
     //Config[CSwitchNames[swnConfig]]       := 'relay1/config'; //in case of multiple switches
     //Config[CSwitchNames[swnCommandTopic]] := 'set'; //required, default
@@ -1063,8 +1063,8 @@ begin
   Text := TMQTTText.Create;
   with Text do begin
     Device := MyDevice;
-    Config[CTextNames[tnObjectId]]     := did + '_text';
-    Config[CTextNames[tnUniqueId]]     := Config[CTextNames[tnObjectId]];
+    Config[CTextNames[tnDefaultEntityId]]     := did + '_text';
+    Config[CTextNames[tnUniqueId]]     := Config[CTextNames[tnDefaultEntityId]];
     Config[CTextNames[tnName]]         := 'Text';
     Config[CTextNames[tnCommandTopic]] := 'set';
     Config[CTextNames[tnStateTopic]]   := 'text';
@@ -1085,8 +1085,8 @@ begin
   Update := TMQTTUpdate.Create;
   with Update do begin
     Device := MyDevice;
-    Config[CUpdateNames[unObjectId]]        := did + '_update';
-    Config[CUpdateNames[unUniqueId]]        := Config[CUpdateNames[unObjectId]];
+    Config[CUpdateNames[unDefaultEntityId]] := did + '_update';
+    Config[CUpdateNames[unUniqueId]]        := Config[CUpdateNames[unDefaultEntityId]];
     Config[CUpdateNames[unCommandTopic]]    := 'install';
     Config[CUpdateNames[unPayloadInstall]]  := 'GO!';
     Config[CUpdateNames[unStateTopic]]      := 'version';
@@ -1105,8 +1105,8 @@ begin
   Valve := TMQTTValve.Create;
   with Valve do begin
     Device := MyDevice;
-    Config[CValveNames[vnObjectId]]     := did + '_valve';
-    Config[CValveNames[vnUniqueId]]     := Config[CValveNames[vnObjectId]];
+    Config[CValveNames[vnDefaultEntityId]]     := did + '_valve';
+    Config[CValveNames[vnUniqueId]]     := Config[CValveNames[vnDefaultEntityId]];
     Config[CValveNames[vnName]]         := 'Valve';
     Config[CValveNames[vnDeviceClass]]  := 'water'; //none, water, gas
     Config[CValveNames[vnCommandTopic]] := 'set';

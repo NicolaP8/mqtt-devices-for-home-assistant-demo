@@ -1,5 +1,11 @@
 Demo program
 
+2026.03.04 - Nicola Perotto nicola@nicolaperotto.it
+  Added
+    + added DefaultEntityId to replace deprecated ObjectId
+  Changed
+    * small changes to have a more updateable code
+  
 2024.12.1 beta - 2024.12.11 Nicola Perotto nicola@nicolaperotto.it
 	Added
     + Initial release

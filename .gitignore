@@ -1,2 +1,8 @@
+*.dcu
+*.ddp
+*.~pas
+*.~dfm
+*.~dpr
+*.~ddp
 backup/
 lib/

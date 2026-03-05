@@ -19,15 +19,15 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="876"/>
-        <CursorPos Y="913"/>
+        <IsVisibleTab Value="True"/>
         <UsageCount Value="215"/>
-        <Bookmarks Count="2">
+        <Bookmarks Count="3">
           <Item0 X="9" Y="351" ID="3"/>
-          <Item1 Y="160" ID="2"/>
+          <Item1 Y="1105" Left="1" Top="1059" ID="1"/>
+          <Item2 Y="510" Left="1" Top="468" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="..\mqttdevice.pas"/>
@@ -60,7 +60,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="91"/>
         <CursorPos X="12" Y="106"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="205"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -70,7 +70,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos Y="105"/>
-        <UsageCount Value="197"/>
+        <UsageCount Value="204"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -80,7 +80,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="36"/>
         <CursorPos Y="95"/>
-        <UsageCount Value="197"/>
+        <UsageCount Value="204"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -90,7 +90,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos Y="156"/>
-        <UsageCount Value="197"/>
+        <UsageCount Value="204"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -100,7 +100,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="39"/>
         <CursorPos Y="98"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -110,7 +110,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="72"/>
         <CursorPos Y="131"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -120,7 +120,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="120"/>
         <CursorPos X="5" Y="186"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -130,7 +130,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="51"/>
         <CursorPos X="5" Y="117"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -140,7 +140,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="206"/>
         <CursorPos Y="212"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -149,7 +149,7 @@
         <UnitName Value="mqTagScanner"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="5" Y="59"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -159,7 +159,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="31"/>
         <CursorPos X="5" Y="97"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -169,7 +169,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="38"/>
         <CursorPos X="5" Y="104"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -177,7 +177,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="mqValve"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="196"/>
+        <UsageCount Value="203"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -185,28 +185,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="784"/>
         <CursorPos Y="817"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="..\mqttinternal.pas"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="70"/>
+        <UsageCount Value="66"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\lazarus\lazarus\lcl\include\customcheckbox.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="31"/>
-        <CursorPos Y="64"/>
-        <UsageCount Value="2"/>
       </Unit>
       <Unit>
         <Filename Value="..\niclib\mqbinarysensor.pas"/>
         <UnitName Value="mqBinarySensor"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="3"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="56"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -214,7 +207,7 @@
         <UnitName Value="mqttDevice"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="5"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="56"/>
         <Bookmarks Count="4">
           <Item0 Y="736" ID="4"/>
           <Item1 Y="672"/>
@@ -228,7 +221,7 @@
         <UnitName Value="mqButton"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="4"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="55"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -236,7 +229,7 @@
         <UnitName Value="mqCover"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="4"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="52"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -244,7 +237,7 @@
         <UnitName Value="mqSensor"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="58" Y="2"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="35"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -252,21 +245,14 @@
         <UnitName Value="mqSwitch"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="12"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="35"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\lazarus\lazarus\lcl\include\scrollbar.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="68"/>
-        <CursorPos Y="127"/>
-        <UsageCount Value="1"/>
       </Unit>
       <Unit>
         <Filename Value="..\niclib\mqdevicetrigger.pas"/>
         <UnitName Value="mqDeviceTrigger"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="34"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -274,7 +260,7 @@
         <UnitName Value="mqFan"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="2"/>
-        <UsageCount Value="36"/>
+        <UsageCount Value="32"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -283,35 +269,22 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1785"/>
         <CursorPos X="30" Y="1817"/>
-        <UsageCount Value="5"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\lazarus\lazarus\lcl\include\buttoncontrol.inc"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="56"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit>
       <Unit>
         <Filename Value="..\niclib\mqlight.pas"/>
         <UnitName Value="mqLight"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="57" Y="2"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\lazarus\lazarus\lcl\include\trackbar.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="158"/>
-        <CursorPos Y="191"/>
-        <UsageCount Value="3"/>
       </Unit>
       <Unit>
         <Filename Value="..\niclib\mqlock.pas"/>
         <UnitName Value="mqLock"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="2"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="16"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -319,7 +292,7 @@
         <UnitName Value="mqTagScanner"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="55" Y="2"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -327,7 +300,7 @@
         <UnitName Value="mqText"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="56" Y="2"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -335,185 +308,284 @@
         <UnitName Value="mqUpdate"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="2"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="..\niclib\mqvalve.pas"/>
         <UnitName Value="mqValve"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="..\niclib\mqtt.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="71" Y="16"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="2"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqtt.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1005"/>
-        <CursorPos Y="1053"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="11"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
         <UnitName Value="mqttDevice"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="1009"/>
-        <CursorPos Y="1030"/>
-        <UsageCount Value="14"/>
-        <Bookmarks Count="1">
-          <Item0 Y="1032" ID="1"/>
-        </Bookmarks>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1119"/>
+        <CursorPos Y="1186"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqdevicetrigger.pas"/>
         <UnitName Value="mqDeviceTrigger"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="68"/>
-        <CursorPos Y="68"/>
+        <EditorIndex Value="11"/>
+        <UsageCount Value="36"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqtagscanner.pas"/>
+        <UnitName Value="mqTagScanner"/>
+        <EditorIndex Value="5"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqtagscanner.pas"/>
-        <UnitName Value="mqTagScanner"/>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqbinarysensor.pas"/>
+        <UnitName Value="mqBinarySensor"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="106"/>
+        <CursorPos Y="165"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqbutton.pas"/>
+        <UnitName Value="mqButton"/>
+        <EditorIndex Value="13"/>
+        <TopLine Value="55"/>
+        <CursorPos X="37" Y="115"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqcover.pas"/>
+        <UnitName Value="mqCover"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="143"/>
+        <CursorPos X="37" Y="203"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqfan.pas"/>
+        <UnitName Value="mqFan"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="102"/>
+        <CursorPos X="37" Y="162"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqlight.pas"/>
+        <UnitName Value="mqLight"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="145"/>
+        <CursorPos X="38" Y="205"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqlock.pas"/>
+        <UnitName Value="mqLock"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="72"/>
+        <CursorPos X="38" Y="132"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqsensor.pas"/>
+        <UnitName Value="mqSensor"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="172"/>
+        <CursorPos X="37" Y="232"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqswitch.pas"/>
+        <UnitName Value="mqSwitch"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqtext.pas"/>
+        <UnitName Value="mqText"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="15" Y="32"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqupdate.pas"/>
+        <UnitName Value="mqUpdate"/>
+        <EditorIndex Value="3"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqvalve.pas"/>
+        <UnitName Value="mqValve"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="15" Y="30"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttinternal.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="22"/>
-        <CursorPos Y="54"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="853"/>
+        <CursorPos Y="897"/>
+        <UsageCount Value="11"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1102" TopLine="1086"/>
+        <Caret Line="321" Column="16" TopLine="261"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1103" TopLine="1086"/>
+        <Caret Line="359" Column="15" TopLine="299"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1100" TopLine="1086"/>
+        <Caret Line="389" Column="16" TopLine="329"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1101" TopLine="1086"/>
+        <Caret Line="428" Column="15" TopLine="368"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1102" TopLine="1086"/>
+        <Caret Line="456" Column="15" TopLine="396"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1103" TopLine="1086"/>
+        <Caret Line="484" Column="15" TopLine="424"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1106" TopLine="1086"/>
+        <Caret Line="654" Column="17" TopLine="594"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1107" TopLine="1086"/>
+        <Caret Line="679" Column="70" TopLine="619"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1108" TopLine="1086"/>
+        <Caret Line="1086" Column="15" TopLine="1026"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1107" TopLine="1086"/>
+        <Caret Line="1127" Column="20" TopLine="1067"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1108" TopLine="1086"/>
+        <Caret Line="1166" Column="26" TopLine="1106"/>
       </Position>
       <Position>
         <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1124" Column="13" TopLine="1086"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="78" Column="16" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="106" Column="15" TopLine="46"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="132" Column="15" TopLine="72"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="194" Column="15" TopLine="134"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="269" Column="16" TopLine="209"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="321" Column="16" TopLine="261"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="359" Column="15" TopLine="299"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="389" Column="16" TopLine="329"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="428" Column="15" TopLine="368"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="456" Column="15" TopLine="396"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="484" Column="15" TopLine="424"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="654" Column="24" TopLine="594"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="679" Column="91" TopLine="619"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="1086" Column="22" TopLine="1026"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
+        <Caret Line="1127" Column="27" TopLine="1067"/>
       </Position>
       <Position>
         <Filename Value="Unit1.pas"/>
-        <Caret Line="913" TopLine="876"/>
+        <Caret Line="841" Column="68" TopLine="796"/>
       </Position>
       <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1109" TopLine="1052"/>
+        <Filename Value="Unit1.pas"/>
       </Position>
       <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1115" TopLine="1056"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1118" TopLine="1059"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1116" TopLine="1059"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1118" TopLine="1059"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1117" TopLine="1059"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1118" TopLine="1059"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1114" TopLine="1059"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1119" TopLine="1060"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1120" TopLine="1061"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1107" TopLine="1061"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1124" TopLine="1065"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1125" TopLine="1066"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1128" TopLine="1069"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1130" TopLine="1071"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1134" TopLine="1075"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\Borland\NICLIB\mqtt\mqttdevice.pas"/>
-        <Caret Line="1135" TopLine="1076"/>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="464" TopLine="464"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -521,15 +593,4 @@
       <Modes ActiveMode=""/>
     </RunParams>
   </ProjectSession>
-  <Debugging>
-    <BreakPoints>
-      <Item>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\md.pas"/>
-        <Line Value="915"/>
-      </Item>
-    </BreakPoints>
-  </Debugging>
 </CONFIG>
