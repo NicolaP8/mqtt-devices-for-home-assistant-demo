@@ -6,3 +6,4 @@
 *.~ddp
 backup/
 lib/
+*.exe
