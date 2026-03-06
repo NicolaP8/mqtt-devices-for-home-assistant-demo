@@ -171,6 +171,9 @@
       <Item>
         <Name Value="RunError(103)"/>
       </Item>
+      <Item>
+        <Name Value="EReadError"/>
+      </Item>
     </Exceptions>
   </Debugging>
 </CONFIG>

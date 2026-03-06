@@ -12,8 +12,8 @@ Uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, TypInfo, IniFiles,
   mqtt, opensslsockets, mqttDevice,
-  mqBinarySensor, mqButton, mqCover, mqDeviceTrigger, mqFan, mqLight, mqLock, mqSensor, mqSwitch,
-  mqTagScanner, mqText, mqUpdate, mqValve;
+  mqBinarySensor, mqButton, mqCover, mqDeviceTrigger, mqFan, mqLight, mqLock, mqNumber,
+  mqSensor, mqSwitch, mqTagScanner, mqText, mqUpdate, mqValve;
 
 Const
   cfgVersion                  = '2026.03.04';
@@ -44,6 +44,7 @@ Type
     subIDLightBrightness,
     subIDLightPower,
     subIDLockCommand,
+    subIDNumberCommand,
     subIDSensorCommand,
     subIDSwitchCommand,
     subIDTagScannerCommand,
@@ -74,6 +75,7 @@ Type
     gbCover: TGroupBox;
     gbValve: TGroupBox;
     gbFan: TGroupBox;
+    lNumber: TLabel;
     lText: TLabel;
     lSensor: TLabel;
     Memo: TMemo;
@@ -85,6 +87,7 @@ Type
     stValveState: TStaticText;
     stCoverTilt: TStaticText;
     stCoverState: TStaticText;
+    tbNumber: TTrackBar;
     tbValvePosition: TTrackBar;
     Timer: TTimer;
     TimerCover: TTimer;
@@ -118,14 +121,17 @@ Type
     procedure tbCoverTiltChange(Sender: TObject);
     procedure tbFanSpeedChange(Sender: TObject);
     procedure tbLightChange(Sender: TObject);
+    procedure tbNumberChange(Sender: TObject);
     procedure tbValvePositionChange(Sender: TObject);
     procedure TimerCoverTimer(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure tbSensorChange(Sender: TObject);
     procedure TimerValveTimer(Sender: TObject);
   private
-    IsClosing : Boolean;
+    NumberReentrant, IsClosing : Boolean;
 
+    Function NumberData(Var AValue:string):Boolean;
+    procedure DoNumberValue(ACmd:string);
     Function BinarySensorData(Var AValue:string):Boolean;
     Procedure DoButtonCommand(ACmd:string);
     Function CoverData(Var AValue:string):Boolean;
@@ -176,6 +182,7 @@ Type
     Fan           : TMQTTFan;
     Light         : TMQTTLight;
     Lock          : TMQTTLock;
+    Number        : TMQTTNumber;
     Sensor        : TMQTTSensor;
     Switch        : TMQTTSwitch;
     TagScanner    : TMQTTTagScanner;
@@ -543,6 +550,32 @@ begin
   if Light.Brightness = 0 then cbLight.Checked := False;
   LightUpdateBrightness;
 end;
+
+//*****************************************************************************
+procedure TForm1.tbNumberChange(Sender: TObject);
+begin
+  if NumberReentrant then Exit;
+  Number.Value := tbNumber.Position * 2.5;
+  Number.SendStateTopic(nnStateTopic, Format('%.1n', [Number.Value]));
+end; //tbNumberChange
+
+procedure TForm1.DoNumberValue(ACmd:string);
+begin
+  NumberReentrant := True;
+  try
+    Number.Value := StrToFloatDef(ACmd, Number.Value);
+    tbNumber.Position := Trunc(Number.Value / 2.5); //Warning: the TTrackBar will fire a OnChange event, in this case tbNumberChange
+  finally
+    NumberReentrant := False;
+  end;
+end; //DoNumberValue
+
+Function TForm1.NumberData(Var AValue:string):Boolean;
+begin
+  Number.Value := tbNumber.Position * 2.5;
+  AValue := Format('%.1n', [Number.Value]);
+  Result := True;
+end; //LockData
 
 //*****************************************************************************
 procedure TForm1.cbLockChange(Sender: TObject);
@@ -961,7 +994,7 @@ begin
   Light := TMQTTLight.Create;
   with Light do begin
     Device := MyDevice;
-    Config[CLightNames[linDefaultEntityId]]                := did + '_light';
+    Config[CLightNames[linDefaultEntityId]]         := did + '_light';
     Config[CLightNames[linUniqueId]]                := Config[CLightNames[linDefaultEntityId]];
     Config[CLightNames[linName]]                    := 'Light';
     Config[CLightNames[linBrightnessCommandTopic]]  := 'brightness_set';
@@ -1000,6 +1033,30 @@ begin
     Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
 
     if not Subscribe(lonCommandTopic, Ord(subIDLockCommand)) then Debug('Error: Lock subscribe to ' + CLockNames[lonCommandTopic]);
+    Memo.Lines.Add('');
+  end; //With
+
+  Number := TMQTTNumber.Create;
+  with Number do begin
+    Device := MyDevice;
+    Config[CNumberNames[nnDefaultEntityId]]         := did + '_number';
+    Config[CNumberNames[nnUniqueId]]                := Config[CNumberNames[nnDefaultEntityId]];
+    Config[CNumberNames[nnName]]                    := 'Number';
+    Config[CNumberNames[nnCommandTopic]]            := 'set';
+    Config[CNumberNames[nnIcon]]                    := 'mdi:numeric';
+    Config[CNumberNames[nnStateTopic]]              := 'state';
+    Config[CNumberNames[nnMin]]                     := '0.0';
+    Config[CNumberNames[nnMax]]                     := '100.0';
+    Config[CNumberNames[nnStep]]                    := '2.5';
+    Config[CNumberNames[nnMode]]                    := 'slider';
+    Config[CNumberNames[nnPayloadReset]]            := 'reset';
+    Config[CNumberNames[nnUnitOfMeasurement]]       := '%';
+    QoS := 1;
+    Retain := False;
+    OnReadData := NumberData;
+    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+
+    if not Subscribe(nnCommandTopic, Ord(subIDNumberCommand)) then Debug('Error: Number subscribe to ' + CNumberNames[nnCommandTopic]);
     Memo.Lines.Add('');
   end; //With
 
@@ -1143,6 +1200,8 @@ Var
   Ini : TIniFile;
 begin
   IsClosing := False;
+  NumberReentrant := False;
+  DecimalSeparator := '.'; //@@@ my HA uses english language
 
   try
     Ini := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
@@ -1176,6 +1235,7 @@ begin
   FreeAndNil(Fan);
   FreeAndNil(Light);
   FreeAndNil(Lock);
+  FreeAndNil(Number);
   FreeAndNil(Sensor);
   FreeAndNil(Switch);
   FreeAndNil(TagScanner);
@@ -1253,6 +1313,8 @@ begin
   subIDLightPower           : DoLightPower(Msg.Message);
 
   subIDLockCommand          : DoLockCommand(Msg.Message);
+
+  subIDNumberCommand        : DoNumberValue(Msg.Message);
 
   subIDSensorCommand        : ;
 
