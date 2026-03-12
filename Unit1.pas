@@ -1,6 +1,6 @@
 {
-  Demo
-  Version 2026.03.04
+  MQTTDevice Library Demo
+  Version 2026.03.12
 }
 {$I+,R+,Q+,H+}
 {$MODE DELPHI}
@@ -10,15 +10,15 @@ Interface
 
 Uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, TypInfo, IniFiles,
-  mqtt, opensslsockets, mqttDevice,
+  Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, TypInfo, IniFiles, opensslsockets,
+  mqtt, mqttDevice,
   mqBinarySensor, mqButton, mqCover, mqDeviceTrigger, mqFan, mqLight, mqLock, mqNumber,
   mqSensor, mqSwitch, mqTagScanner, mqText, mqUpdate, mqValve;
 
 Const
-  cfgVersion                  = '2026.03.04';
+  cfgVersion                  = '2026.03.12';
   cfgDeviceName     : string  = 'HADemo';
-  cfgDeviceID       : string  = 'hademo';
+  cfgDeviceID       : string  = 'hademo'; //The DeviceID HAS to be unique.
   cfgSerialNumber : integer = 1;
 
   cfgMqttHost     : string  = '';
@@ -28,10 +28,10 @@ Const
   cfgMqttPass     : string  = '';
   cfgMqttSSL      : boolean = False;
 
-  cfgTextMaxLength = 40;
+  cfgTextMaxLength = 40; //arbitrary value good for this demo
 
 Type
-  ESubIds = (
+  ESubIds = ( //IDs of topics subscribed. It's an integer. Also there is a function to generate automatically: AssignCommandID
     subIDButtonCommand,
     subIDCoverCommand,
     subIDCoverPosition,
@@ -200,6 +200,8 @@ Implementation
 
 Var
   //Object data used by demo, not part of internal data
+  //the main objects that has a hardware counterpart usually have not an internal data
+  //Some like Text or Number has.
   SensorValue : Double;
   CoverInternalModify : Boolean;
 
@@ -552,6 +554,7 @@ begin
 end;
 
 //*****************************************************************************
+//Here the 2.5 factor is only cosmetic: in the gui the range is 0..40, in HA 0..100
 procedure TForm1.tbNumberChange(Sender: TObject);
 begin
   if NumberReentrant then Exit;
@@ -806,7 +809,7 @@ end; //Button1Click
 
 procedure TForm1.bConnectClick(Sender: TObject);
 begin
-  MyDevice.ReConnectOnDisconnect := True; //from now only
+  MyDevice.ReConnectOnDisconnect := True; //from now only because in this demo the first connection is manual
   if not MyDevice.Connect then
     Debug('connect error');
 end;
@@ -823,24 +826,24 @@ begin
   //did := 'demo_device_' + Format('%3.3d', [cfgSerialNumber]);
   did := cfgDeviceID; //Device ID
   MyDevice := TMQTTDevice.Create;
-  MyDevice.Config[CDeviceNames[dnDevice_Identifiers]] := did;
-  MyDevice.Config[CDeviceNames[dnDevice_Manufacturer]] := 'Nicola Perotto';
-  MyDevice.Config[CDeviceNames[dnDevice_Model]] := 'Lazarus/Fpc';
-  MyDevice.Config[CDeviceNames[dnDevice_Name]] := cfgDeviceName;
-  MyDevice.Config[CDeviceNames[dnDevice_SWVersion]] := cfgVersion;
+  MyDevice.Config[CDeviceNames[dnDevice_Identifiers]]   := did;
+  MyDevice.Config[CDeviceNames[dnDevice_Manufacturer]]  := 'Nicola Perotto';
+  MyDevice.Config[CDeviceNames[dnDevice_Model]]         := 'Lazarus/Fpc';
+  MyDevice.Config[CDeviceNames[dnDevice_Name]]          := cfgDeviceName;
+  MyDevice.Config[CDeviceNames[dnDevice_SWVersion]]     := cfgVersion;
   if cfgMqttID = '' then
     cfgMqttID := did;
   ab.Host := cfgMqttHost;
   ab.Port := cfgMqttPort;
-  ab.ID   := cfgMqttID; //this is very important for delivery of messages
+  ab.ID   := cfgMqttID; //this is very important for delivery of messages, identifies this client
   ab.User := cfgMqttUser;
   ab.Pass := cfgMqttPass;
   ab.SSL  := cfgMqttSSL;
   with MyDevice do begin
-    ReConnectOnDisconnect := False; //Important: set only when you want the first connection! Eg. UseBirth := True try to connect!
+    ReConnectOnDisconnect := False;
     ReSubscribeOnConnect := True;
-    UseBirth := True;
-    UseLastWillAndTestament := True;
+    UseBirth := True; //Subscribe to HA to know when it's ready
+    UseLastWillAndTestament := True; //Subscribe to HA to know when it shutdown or restart
     Broker := ab;
   end; //With
   Memo.Lines.Add('Created device: ' + MyDevice.Config[CDeviceNames[dnDevice_Identifiers]]);
@@ -855,51 +858,55 @@ begin
     MyDevice.Client.ClientKey := 'client.key';
   end;
 
+  //The BinarySensor sends data, doesn't accept commands
+  //Examples: doors and windows
   BinarySensor := TMQTTBinarySensor.Create;
   with BinarySensor do begin
     Device := MyDevice;
-    Config[CBinarySensorNames[bsnDefaultEntityId]]     := did + '_binarysensor';
-    Config[CBinarySensorNames[bsnUniqueId]]     := Config[CBinarySensorNames[bsnDefaultEntityId]];
-    Config[CBinarySensorNames[bsnName]]         := 'Binary Sensor';
-    Config[CBinarySensorNames[bsnDeviceClass]]  := CBinarySensorDeviceClass[bsdcGarageDoor];
-    //Config[CBinarySensorNames[bsnIcon]]       := 'mdi:speedometer'; //not necessary if DeviceClass is used (and you like the default)
-    Config[CBinarySensorNames[bsnPayloadOff]]   := 'CLOSE';
-    Config[CBinarySensorNames[bsnPayloadOn]]    := 'OPEN';
-    //Config[CBinarySensorNames[bsnStateTopic]] := 'state'; //uses default
-    Config[CBinarySensorNames[bsnQos]]          := '1'; //maximum usable for this sensor
+    Config[CBinarySensorNames[bsnUniqueId]]         := did + '_binarysensor';
+    Config[CBinarySensorNames[bsnDefaultEntityId]]  := Config[CBinarySensorNames[bsnPlatform]] + '.' + Config[CBinarySensorNames[bsnUniqueId]];
+    Config[CBinarySensorNames[bsnName]]             := 'Binary Sensor';
+    Config[CBinarySensorNames[bsnDeviceClass]]      := CBinarySensorDeviceClass[bsdcGarageDoor];
+    //Config[CBinarySensorNames[bsnIcon]]           := 'mdi:speedometer'; //not necessary if DeviceClass is used (and you like the default)
+    Config[CBinarySensorNames[bsnPayloadOff]]       := 'CLOSE';
+    Config[CBinarySensorNames[bsnPayloadOn]]        := 'OPEN';
+    //Config[CBinarySensorNames[bsnStateTopic]]     := 'state'; //uses default
+    Config[CBinarySensorNames[bsnQos]]              := '1'; //maximum usable for this sensor
     QoS := 1;
     Retain := False;
     RetainConfig := True; //default := True
     OnReadData := BinarySensorData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New binary_sensor: ' + BuildConfigJSON);
     Memo.Lines.Add('');
-    //This sensor send data, doesn't accept commands
   end; //with
 
+  //The button can be pressed by HA!
+  //it has not a state topic
   Button := TMQTTButton.Create;
   with Button do begin
     Device := MyDevice;
-    Config[CButtonNames[bnDefaultEntityId]] := did + '_button';
-    Config[CButtonNames[bnUniqueId]]        := Config[CButtonNames[bnDefaultEntityId]];
+    Config[CButtonNames[bnUniqueId]]        := did + '_button';
+    Config[CButtonNames[bnDefaultEntityId]] := Config[CButtonNames[bnPlatform]] + '.' + Config[CButtonNames[bnUniqueId]];
     Config[CButtonNames[bnName]]            := 'Button';
     //Config[CButtonNames[bnCommandTopic]]  := 'set'; //uses default
     Config[CButtonNames[bnDeviceClass]]     := CButtonDeviceClass[bdcIdentify];
     //Config[CButtonNames[bnIcon]]          := 'mdi:button-cursor'; //not necessary if DeviceClass is used (and you like the default)
     QoS := 1;
     Retain := False;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
-    //you can subscribe before sending config to HA
+    Memo.Lines.Add('New button: ' + BuildConfigJSON);
+    //you can subscribe before sending config to HA because the subscription is to MQTT Broker.
     s := TopicPrefix(bnCommandTopic) + Config[CButtonNames[bnCommandTopic]];
     if not Subscribe(s, Ord(subIDButtonCommand)) then Debug('Error: Button subscribe to ' + s);
     Memo.Lines.Add('');
-    //when a message is received from CommandTopic it's processed in OnReceive event
+    //when a message is received from CommandTopic it's processed in Device.OnReceive event
   end; //with
 
+  //Like a window blind or a garage door
   Cover := TMQTTCover.Create;
   with Cover do begin
     Device := MyDevice;
-    Config[CCoverNames[cnDefaultEntityId]]  := did + '_cover';
-    Config[CCoverNames[cnUniqueId]]         := Config[CCoverNames[cnDefaultEntityId]];
+    Config[CCoverNames[cnUniqueId]]         := did + '_cover';
+    Config[CCoverNames[cnDefaultEntityId]]  := Config[CCoverNames[cnPlatform]] + '.' + Config[CCoverNames[cnUniqueId]];
     Config[CCoverNames[cnName]]             := 'Window'; //a window has opening, closing and tilting
     Config[CCoverNames[cnDeviceClass]]      := CCoverDeviceClass[cdcWindow];
     //Config[CCoverNames[cnIcon]]           := 'mdi:speedometer'; //not necessary if DeviceClass is used (and you like the default)
@@ -922,7 +929,7 @@ begin
     Position := 0;
     Tilt := 0;
     OnReadData := CoverData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New cover: ' + BuildConfigJSON);
 
     s := TopicPrefix(cnCommandTopic) + Config[CCoverNames[cnCommandTopic]];
     if not Subscribe(s, Ord(subIDCoverCommand)) then Debug('Error: Cover subscribe to ' + s);
@@ -943,18 +950,19 @@ begin
     Config[CDeviceTriggerNames[dtnSubtype]]        := CDeviceTriggerSubtype[dtsTurnOn];
     QoS := 0;
     Retain := False;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New device trigger: ' + BuildConfigJSON);
 
     s := TopicPrefix(dtnTopic) + Config[CDeviceTriggerNames[dtnTopic]];
     if not Subscribe(s, Ord(subIDDeviceTriggerCommand)) then Debug('Error: DeviceTrigger subscribe to ' + s);
     Memo.Lines.Add('');
   end; //With
 
+  //a simple on/off ventilator or a complex with multiple speeds and oscillation
   Fan := TMQTTFan.Create;
   with Fan do begin
     Device := MyDevice;
-    Config[CFanNames[fnDefaultEntityId]]          := did + '_fan';
-    Config[CFanNames[fnUniqueId]]                 := Config[CFanNames[fnDefaultEntityId]];
+    Config[CFanNames[fnUniqueId]]                 := did + '_fan';
+    Config[CFanNames[fnDefaultEntityId]]          := Config[CFanNames[fnPlatform]] + '.' + Config[CFanNames[fnUniqueId]];
     Config[CFanNames[fnName]]                     := 'Ventilator';
     Config[CFanNames[fnCommandTopic]]             := 'set';
     Config[CFanNames[fnIcon]]                     := 'mdi:fan';
@@ -978,7 +986,7 @@ begin
     Direction := True; //Forward
     Oscillate := False;
     Speed := 0;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New fan: ' + BuildConfigJSON);
 
     s := TopicPrefix(fnCommandTopic) + Config[CFanNames[fnCommandTopic]];
     if not Subscribe(s, Ord(subIDFanCommand)) then Debug('Error: Fan subscribe to ' + s);
@@ -991,11 +999,12 @@ begin
     Memo.Lines.Add('');
   end; //With
 
+  //A source of light, very versatile! Read the docs...
   Light := TMQTTLight.Create;
   with Light do begin
     Device := MyDevice;
-    Config[CLightNames[linDefaultEntityId]]         := did + '_light';
-    Config[CLightNames[linUniqueId]]                := Config[CLightNames[linDefaultEntityId]];
+    Config[CLightNames[linUniqueId]]                := did + '_light';
+    Config[CLightNames[linDefaultEntityId]]         := Config[CLightNames[linPlatform]] + '.' + Config[CLightNames[linUniqueId]];
     Config[CLightNames[linName]]                    := 'Light';
     Config[CLightNames[linBrightnessCommandTopic]]  := 'brightness_set';
     Config[CLightNames[linBrightnessScale]]         := '100';
@@ -1007,7 +1016,7 @@ begin
     Retain := False;
     State := False;
     Brightness := 0;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New light: ' + BuildConfigJSON);
 
     //s := TopicPrefix(linBrightnessCommandTopic) + Config[CLightNames[linBrightnessCommandTopic]];
     if not Subscribe(linBrightnessCommandTopic, Ord(subIDLightBrightness)) then Debug('Error: Light subscribe to ' + CLightNames[linBrightnessCommandTopic]);
@@ -1016,11 +1025,12 @@ begin
     Memo.Lines.Add('');
   end; //With
 
+  //An electronic lock
   Lock := TMQTTLock.Create;
   with Lock do begin
     Device := MyDevice;
-    Config[CLockNames[lonDefaultEntityId]]         := did + '_lock';
-    Config[CLockNames[lonUniqueId]]                := Config[CLockNames[lonDefaultEntityId]];
+    Config[CLockNames[lonUniqueId]]                := did + '_lock';
+    Config[CLockNames[lonDefaultEntityId]]         := Config[CLockNames[lonPlatform]] + '.' + Config[CLockNames[lonUniqueId]];
     Config[CLockNames[lonName]]                    := 'Lock';
     Config[CLockNames[lonCommandTopic]]            := 'set';
     Config[CLockNames[lonIcon]]                    := 'mdi:lock';
@@ -1030,17 +1040,19 @@ begin
     Retain := False;
     State := False;
     OnReadData := LockData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New lock: ' + BuildConfigJSON);
 
     if not Subscribe(lonCommandTopic, Ord(subIDLockCommand)) then Debug('Error: Lock subscribe to ' + CLockNames[lonCommandTopic]);
     Memo.Lines.Add('');
   end; //With
 
+  //A floating point number that can be sent from both ends
+  //Example: a parameter
   Number := TMQTTNumber.Create;
   with Number do begin
     Device := MyDevice;
-    Config[CNumberNames[nnDefaultEntityId]]         := did + '_number';
-    Config[CNumberNames[nnUniqueId]]                := Config[CNumberNames[nnDefaultEntityId]];
+    Config[CNumberNames[nnUniqueId]]                := did + '_number';
+    Config[CNumberNames[nnDefaultEntityId]]         := Config[CNumberNames[nnPlatform]] + '.' + Config[CNumberNames[nnUniqueId]];
     Config[CNumberNames[nnName]]                    := 'Number';
     Config[CNumberNames[nnCommandTopic]]            := 'set';
     Config[CNumberNames[nnIcon]]                    := 'mdi:numeric';
@@ -1060,11 +1072,12 @@ begin
     Memo.Lines.Add('');
   end; //With
 
+  //A generic sensor
   Sensor := TMQTTSensor.Create;
   with Sensor do begin
     Device := MyDevice;
-    Config[CSensorNames[snDefaultEntityId]]           := did + '_sensor';
-    Config[CSensorNames[snUniqueId]]                  := Config[CSensorNames[snDefaultEntityId]];
+    Config[CSensorNames[snUniqueId]]                  := did + '_sensor';
+    Config[CSensorNames[snDefaultEntityId]]           := Config[CSensorNames[snPlatform]] + '.' + Config[CSensorNames[snUniqueId]];
     Config[CSensorNames[snName]]                      := 'Sensor';
     Config[CSensorNames[snDeviceClass]]               := CSensorDeviceClass[sdcTemperature];
     Config[CSensorNames[snIcon]]                      := 'hass:thermometer';
@@ -1083,23 +1096,24 @@ begin
     SensorValue := 10;
   end; //With
 
+  //A switch, can be controlled by both sides.
   Switch := TMQTTSwitch.Create;
   with Switch do begin
     Device := MyDevice;
-    Config[CSwitchNames[swnDefaultEntityId]]     := did + '_relay';
-    Config[CSwitchNames[swnUniqueId]]     := Config[CSwitchNames[swnDefaultEntityId]];
-    Config[CSwitchNames[swnName]]         := 'Switch';
-    //Config[CSwitchNames[swnConfig]]       := 'relay1/config'; //in case of multiple switches
-    //Config[CSwitchNames[swnCommandTopic]] := 'set'; //required, default
-    Config[CSwitchNames[swnStateTopic]]   := 'state'; //the first part is built by object
-    Config[CSwitchNames[swnDeviceClass]]  := CSwitchDeviceClass[swdcSwitch];
-    Config[CSwitchNames[swnIcon]]         := 'mdi:toggle-switch';
-    Config[CSwitchNames[swnQos]]          := '1';
+    Config[CSwitchNames[swnUniqueId]]         := did + '_relay';
+    Config[CSwitchNames[swnDefaultEntityId]]  := Config[CSwitchNames[swnPlatform]] + '.' + Config[CSwitchNames[swnUniqueId]];
+    Config[CSwitchNames[swnName]]             := 'Switch';
+    //Config[CSwitchNames[swnConfig]]         := 'relay1/config'; //in case of multiple switches
+    //Config[CSwitchNames[swnCommandTopic]]   := 'set'; //required, default
+    Config[CSwitchNames[swnStateTopic]]       := 'state'; //the first part is built by object
+    Config[CSwitchNames[swnDeviceClass]]      := CSwitchDeviceClass[swdcSwitch];
+    Config[CSwitchNames[swnIcon]]             := 'mdi:toggle-switch';
+    Config[CSwitchNames[swnQos]]              := '1';
     QoS := 1;
     Retain := False;
     State := False;
     OnReadData := SwitchData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New switch: ' + BuildConfigJSON);
     if not Subscribe(swnCommandTopic, Ord(subIDSwitchCommand)) then Debug('Error: Switch subscribe to ' + CSwitchNames[swnCommandTopic]);
     Memo.Lines.Add('');
   end;
@@ -1117,20 +1131,21 @@ begin
   end; //With
 }
 
+  //The text can be sent from both sides.
   Text := TMQTTText.Create;
   with Text do begin
     Device := MyDevice;
-    Config[CTextNames[tnDefaultEntityId]]     := did + '_text';
-    Config[CTextNames[tnUniqueId]]     := Config[CTextNames[tnDefaultEntityId]];
-    Config[CTextNames[tnName]]         := 'Text';
-    Config[CTextNames[tnCommandTopic]] := 'set';
-    Config[CTextNames[tnStateTopic]]   := 'text';
-    Config[CTextNames[tnMode]]         := 'text'; //or 'password'
-    Config[CTextNames[tnMax]]          := IntToStr(cfgTextMaxLength);
+    Config[CTextNames[tnUniqueId]]        := did + '_text';
+    Config[CTextNames[tnDefaultEntityId]] := Config[CTextNames[tnPlatform]] + '.' + Config[CTextNames[tnUniqueId]];
+    Config[CTextNames[tnName]]            := 'Text';
+    Config[CTextNames[tnCommandTopic]]    := 'set';
+    Config[CTextNames[tnStateTopic]]      := 'text';
+    Config[CTextNames[tnMode]]            := 'text'; //or 'password'
+    Config[CTextNames[tnMax]]             := IntToStr(cfgTextMaxLength);
     QoS := 1;
     Retain := False;
     OnReadData := TextData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New text: ' + BuildConfigJSON);
     if not Subscribe(tnCommandTopic, Ord(subIDTextCommand)) then Debug('Error: Text subscribe to ' + CTextNames[tnCommandTopic]);
     Memo.Lines.Add('');
 
@@ -1139,11 +1154,12 @@ begin
     eText.MaxLength := cfgTextMaxLength;
   end; //With
 
+  //Help update the firmware
   Update := TMQTTUpdate.Create;
   with Update do begin
     Device := MyDevice;
-    Config[CUpdateNames[unDefaultEntityId]] := did + '_update';
-    Config[CUpdateNames[unUniqueId]]        := Config[CUpdateNames[unDefaultEntityId]];
+    Config[CUpdateNames[unUniqueId]]        := did + '_update';
+    Config[CUpdateNames[unDefaultEntityId]] := Config[CUpdateNames[unPlatform]] + '.' + Config[CUpdateNames[unUniqueId]];
     Config[CUpdateNames[unCommandTopic]]    := 'install';
     Config[CUpdateNames[unPayloadInstall]]  := 'GO!';
     Config[CUpdateNames[unStateTopic]]      := 'version';
@@ -1154,21 +1170,22 @@ begin
     QoS := 1;
     Retain := True; //retain
     OnReadData := UpdateData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New update: ' + BuildConfigJSON);
     if not Subscribe(unCommandTopic, Ord(subIDUpdateCommand)) then Debug('Error: Update subscribe to ' + CUpdateNames[unCommandTopic]);
     Memo.Lines.Add('');
   end; //With
 
+  //A gas or water valve, controlled by both ends.
   Valve := TMQTTValve.Create;
   with Valve do begin
     Device := MyDevice;
-    Config[CValveNames[vnDefaultEntityId]]     := did + '_valve';
-    Config[CValveNames[vnUniqueId]]     := Config[CValveNames[vnDefaultEntityId]];
-    Config[CValveNames[vnName]]         := 'Valve';
-    Config[CValveNames[vnDeviceClass]]  := 'water'; //none, water, gas
-    Config[CValveNames[vnCommandTopic]] := 'set';
-    Config[CValveNames[vnPayloadStop]]  := 'STOP'; //to be defined if HA can send a stop command
-    Config[CValveNames[vnStateTopic]]   := 'state';
+    Config[CValveNames[vnUniqueId]]         := did + '_valve';
+    Config[CValveNames[vnDefaultEntityId]]  := Config[CValveNames[vnPlatform]] + '.' + Config[CValveNames[vnUniqueId]];
+    Config[CValveNames[vnName]]             := 'Valve';
+    Config[CValveNames[vnDeviceClass]]      := 'water'; //none, water, gas
+    Config[CValveNames[vnCommandTopic]]     := 'set';
+    Config[CValveNames[vnPayloadStop]]      := 'STOP'; //to be defined if HA can send a stop command
+    Config[CValveNames[vnStateTopic]]       := 'state';
 
     ReportsPosition := True;
     if ReportsPosition then begin
@@ -1188,7 +1205,7 @@ begin
     State := evsClosed;
     Position := 0;
     OnReadData := ValveData;
-    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+    Memo.Lines.Add('New valve: ' + BuildConfigJSON);
     if not Subscribe(vnCommandTopic, Ord(subIDValveCommand)) then Debug('Error: Valve subscribe to ' + CValveNames[vnCommandTopic]);
     Memo.Lines.Add('');
   end; //With
@@ -1224,8 +1241,13 @@ end;
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   IsClosing := True;
+  //first unsubscribe
   MyDevice.UnsubscribeAll;
+
+  //second disconnect
   MyDevice.Client.Disconnect;
+
+  //free all objects
   FreeAndNil(MyDevice);
 
   FreeAndNil(BinarySensor);
@@ -1278,6 +1300,7 @@ procedure TForm1.OnReceive(Client: TMQTTClient; Msg: TMQTTRXData);
 var
   I: Integer;
 begin
+  //here we receive the subscribed topics' messages
   Debug(Format('OnReceive: QoS %d %d %d %s = %s', [Msg.QoS, Msg.SubsID, Msg.ID, Msg.Topic, Msg.Message]));
   if Msg.RespTopic <> '' then
     Debug(Format('           Response Topic: %s', [Msg.RespTopic]));
