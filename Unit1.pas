@@ -1,6 +1,6 @@
 {
   MQTTDevice Library Demo
-  Version 2026.03.12
+  Version 2026.05.07
 }
 {$I+,R+,Q+,H+}
 {$MODE DELPHI}
@@ -10,10 +10,11 @@ Interface
 
 Uses
   LCLIntf, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, TypInfo, IniFiles, opensslsockets,
-  mqtt, mqttDevice,
-  mqBinarySensor, mqButton, mqCover, mqDeviceTrigger, mqFan, mqLight, mqLock, mqNumber,
-  mqSensor, mqSwitch, mqTagScanner, mqText, mqUpdate, mqValve;
+  Dialogs, StdCtrls, ExtCtrls, Buttons, ComCtrls, DateTimePicker, TypInfo,
+  IniFiles, opensslsockets, DateUtils,
+  mqtt, mqttDevice, mqBinarySensor, mqButton, mqCover,
+  mqDeviceTrigger, mqFan, mqLight, mqLock, mqNumber, mqSensor, mqSwitch,
+  mqTagScanner, mqText, mqUpdate, mqValve, mqDate, mqDateTime, mqTime;
 
 Const
   cfgVersion                  = '2026.03.12';
@@ -29,6 +30,7 @@ Const
   cfgMqttSSL      : boolean = False;
 
   cfgTextMaxLength = 40; //arbitrary value good for this demo
+  cfgExtendedDebug : Boolean = False; //not yet used
 
 Type
   ESubIds = ( //IDs of topics subscribed. It's an integer. Also there is a function to generate automatically: AssignCommandID
@@ -50,12 +52,17 @@ Type
     subIDTagScannerCommand,
     subIDTextCommand,
     subIDUpdateCommand,
-    subIDValveCommand
+    subIDValveCommand,
+    subIDDateCommand,
+    subIDDateTimeCommand,
+    subIDTimeCommand
   );
 
 Type
   { TForm1 }
   TForm1 = class(TForm)
+    bSendData: TButton;
+    bClearLog: TButton;
     bValveClose: TButton;
     bValveOpen: TButton;
     bCoverStop: TButton;
@@ -71,15 +78,23 @@ Type
     cbSwitch: TCheckBox;
     cbFanState: TCheckBox;
     cbLight: TCheckBox;
+    cbExtendedDebug: TCheckBox;
+    dtpDate: TDateTimePicker;
+    dtpDateTime: TDateTimePicker;
+    dtpTime: TDateTimePicker;
     eText: TEdit;
     gbCover: TGroupBox;
     gbValve: TGroupBox;
     gbFan: TGroupBox;
+    lTime: TLabel;
     lNumber: TLabel;
+    lDate: TLabel;
+    lDateTime: TLabel;
     lText: TLabel;
     lSensor: TLabel;
     Memo: TMemo;
     Panel1: TPanel;
+    Panel2: TPanel;
     rgFanDirection: TRadioGroup;
     shButton: TShape;
     stCoverPosition: TStaticText;
@@ -88,6 +103,7 @@ Type
     stCoverTilt: TStaticText;
     stCoverState: TStaticText;
     tbNumber: TTrackBar;
+    tbUpdatePercent: TTrackBar;
     tbValvePosition: TTrackBar;
     Timer: TTimer;
     TimerCover: TTimer;
@@ -97,21 +113,27 @@ Type
     tbCoverTilt: TTrackBar;
     tbSensor: TTrackBar;
     TimerValve: TTimer;
+    procedure bClearLogClick(Sender: TObject);
     procedure bConfigClick(Sender: TObject);
     procedure bConnectClick(Sender: TObject);
     procedure bCoverCloseClick(Sender: TObject);
     procedure bCoverOpenClick(Sender: TObject);
     procedure bCoverStopClick(Sender: TObject);
+    procedure bSendDataClick(Sender: TObject);
     procedure bUpdateClick(Sender: TObject);
     procedure bValveCloseClick(Sender: TObject);
     procedure bValveOpenClick(Sender: TObject);
     procedure bValveStopClick(Sender: TObject);
     procedure cbBinarySensorClick(Sender: TObject);
+    procedure cbExtendedDebugChange(Sender: TObject);
     procedure cbFanOscillationChange(Sender: TObject);
     procedure cbFanStateChange(Sender: TObject);
     procedure cbLightChange(Sender: TObject);
     procedure cbLockChange(Sender: TObject);
     procedure cbSwitchClick(Sender: TObject);
+    procedure dtpDateChange(Sender: TObject);
+    procedure dtpDateTimeChange(Sender: TObject);
+    procedure dtpTimeChange(Sender: TObject);
     procedure eTextKeyPress(Sender: TObject; var Key: char);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -162,6 +184,12 @@ Type
     Procedure DoUpdateCommand(ACmd:string);
     Function ValveData(Var AValue:string):Boolean;
     Procedure DoValveCommand(ACmd:string);
+    Function MDateData(Var AValue:string):Boolean;
+    procedure DoDateValue(ACmd:string);
+    Function MDateTimeData(Var AValue:string):Boolean;
+    procedure DoDateTimeValue(ACmd:string);
+    procedure DoTimeValue(ACmd:string);
+    Function MTimeData(Var AValue:string):Boolean;
 
     procedure DoBirthEvent(ACmd:string);
     procedure DoLWTEvent(ACmd:string);
@@ -189,6 +217,9 @@ Type
     Text          : TMQTTText;
     Update        : TMQTTUpdate;
     Valve         : TMQTTValve;
+    MDate         : TMQTTDate;
+    MDateTime     : TMQTTDateTime;
+    MTime         : TMQTTTime;
   end;
 
 Var
@@ -207,10 +238,91 @@ Var
 
 
 //*****************************************************************************
+procedure TForm1.dtpDateChange(Sender: TObject);
+begin
+  MDate.Value := dtpDate.Date;
+  MDate.SendState; //Topic(ddStateTopic, DateToISO8601(dtpDate.Date, True));
+end;
+
+procedure TForm1.DoDateValue(ACmd:string);
+begin
+  if (ACmd = '') then Exit;
+  try
+    MDate.Value := ScanDateTime('yyyy"-"mm"-"dd', ACmd);
+    dtpDate.Date := MDate.Value;
+  except
+    Debug('Bad date: ' + ACmd);
+  end;
+end; //DoDateValue
+
+Function TForm1.MDateData(Var AValue:string):Boolean;
+begin
+  AValue := DateToISO8601(MDate.Value, True);
+  if cfgExtendedDebug then Debug(AValue);
+  Result := True;
+end; //MDateData
+
+//*****************************************************************************
+procedure TForm1.dtpDateTimeChange(Sender: TObject);
+begin
+  MDateTime.Value := dtpDateTime.Date + dtpDateTime.Time;
+  MDateTime.SendState; //Topic(dtStateTopic, DateToISO8601(MDateTime.Value, False));
+end;
+
+procedure TForm1.DoDateTimeValue(ACmd:string);
+begin //'2026-05-06T16:00:00+00:00'
+  if (ACmd = '') then Exit;
+  try
+    MDateTime.Value := ISO8601ToDate(ACmd, False);
+    dtpDateTime.Time := MDateTime.Value;
+  except
+    Debug('Bad date/time: ' + ACmd);
+  end;
+end; //DoDateTimeValue
+
+Function TForm1.MDateTimeData(Var AValue:string):Boolean;
+begin
+  AValue := DateToISO8601(MDateTime.Value, False); //use system's timezone
+  if cfgExtendedDebug then Debug(AValue);
+  Result := True;
+end; //MDateTimeData
+
+//*****************************************************************************
+procedure TForm1.dtpTimeChange(Sender: TObject);
+begin
+  MTime.Value := dtpTime.Time;
+  MTime.SendState; //Topic(ttStateTopic, DateToISO8601(MTime.Value, True));
+end;
+
+procedure TForm1.DoTimeValue(ACmd:string);
+begin //hh:mm:ss.sss
+  if (ACmd = '') then Exit;
+  try
+    MTime.Value := ScanDateTime('hh":"mm":"ss', ACmd);
+    dtpTime.Time := MTime.Value;
+  except
+    Debug('Bad time: ' + ACmd);
+  end;
+end; //DoTimeValue
+
+Function TForm1.MTimeData(Var AValue:string):Boolean;
+begin
+  //AValue := FormatDateTime('hh:mm:ss.zzz', MTime.Value); //with this HA 2026.5.0 has a bug
+  AValue := FormatDateTime('hh:mm:ss', MTime.Value);
+  if cfgExtendedDebug then Debug(AValue);
+  Result := True;
+end; //MTimeData
+
+//*****************************************************************************
 procedure TForm1.cbBinarySensorClick(Sender: TObject);
 begin
   //cbBinarySensor.Checked := not cbBinarySensor.Checked; //this is automatic
   if Assigned(BinarySensor) then BinarySensor.SendState;
+end;
+
+procedure TForm1.cbExtendedDebugChange(Sender: TObject);
+begin
+  cfgExtendedDebug := cbExtendedDebug.Checked;
 end;
 
 Function TForm1.BinarySensorData(Var AValue:string):Boolean;
@@ -219,6 +331,7 @@ begin
     AValue := BinarySensor.Config[CBinarySensorNames[bsnPayloadOff]]
   else
     AValue := BinarySensor.Config[CBinarySensorNames[bsnPayloadOn]];
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //BinarySensorData
 
@@ -236,6 +349,7 @@ end; //DoButtonCommand
 Function TForm1.CoverData(Var AValue:string):Boolean;
 begin
   AValue := Cover.Config[CCoverNames[ECoverStatesNames[Cover.State]]];
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //CoverData
 
@@ -320,6 +434,29 @@ begin
   CoverUpdate;
 end;
 
+procedure TForm1.bSendDataClick(Sender: TObject);
+begin
+  Debug('Sending data for all entities');
+  //send data for all devices, if it make sense
+  if not BinarySensor.SendState then Debug('Error BinarySensor');
+  //Button.SendState;
+  if not Cover.SendState then Debug('Error Cover'); //complex
+  //DeviceTrigger.SendState;
+  if not Fan.SendState then Debug('Error Fan');
+  //if not Light.SendState then Debug('Error Light'); //complex
+  if not Lock.SendState then Debug('Error Lock');
+  if not Number.SendState then Debug('Error Number');
+  if not Sensor.SendState then Debug('Error Sensor');
+  if not Switch.SendState then Debug('Error Switch');
+  //TagScanner.SendState;
+  if not Text.SendState then Debug('Error Text');
+  if not Update.SendState then Debug('Error Update');
+  if not Valve.SendState then Debug('Error Valve'); //complex
+  if not MDate.SendState then Debug('Error Date');
+  if not MDateTime.SendState then Debug('Error DateTime');
+  if not MTime.SendState then Debug('Error Time');
+end;
+
 procedure TForm1.tbCoverPositionChange(Sender: TObject);
 begin
   if CoverInternalModify then Exit;
@@ -391,6 +528,7 @@ begin
     AValue := Fan.Config[CFanNames[fnPayloadOn]]
   else
     AValue := Fan.Config[CFanNames[fnPayloadOff]];
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //FanData
 
@@ -577,8 +715,9 @@ Function TForm1.NumberData(Var AValue:string):Boolean;
 begin
   Number.Value := tbNumber.Position * 2.5;
   AValue := Format('%.1n', [Number.Value]);
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
-end; //LockData
+end; //NumberData
 
 //*****************************************************************************
 procedure TForm1.cbLockChange(Sender: TObject);
@@ -604,6 +743,7 @@ begin
     AValue := Lock.Config[CLockNames[lonStateLocked]]
   else
     AValue := Lock.Config[CLockNames[lonStateUnlocked]];
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //LockData
 
@@ -632,6 +772,7 @@ begin
     AValue := Switch.Config[CSwitchNames[swnPayloadOn]]
   else
     AValue := Switch.Config[CSwitchNames[swnPayloadOff]];
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //SwitchData
 
@@ -656,6 +797,7 @@ end;
 Function TForm1.TextData(Var AValue:string):Boolean;
 begin
   AValue := eText.Text;
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //TextData
 
@@ -673,8 +815,27 @@ end;
 
 //*****************************************************************************
 Function TForm1.UpdateData(Var AValue:string):Boolean;
+Var
+  vers, insta, perc : string;
 begin
-  AValue := 'Version: 1.2.3';
+  if tbUpdatePercent.Position = 0 then begin
+    perc := 'null';
+    insta := 'false';
+    vers := '';
+  end else begin
+    perc := IntToStr(tbUpdatePercent.Position);
+    insta := 'true';
+    vers := '"latest_version": "2026.05.07",';
+  end;
+  AValue := '{"installed_version": "2022.11",'
+    + vers
+    + '"title": "Custom firmware",'
+    + '"release_summary": "A long description...",'
+    + '"release_url": "https://www.homeassistant.io",'
+    + '"in_progress": ' + insta + ','
+    + '"update_percentage": ' + perc
+    + '}';
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //UpdateData
 
@@ -698,6 +859,7 @@ begin
     AValue := IntToStr(Valve.Position)
   else
     AValue := Valve.JSONState;
+  if cfgExtendedDebug then Debug(AValue);
   Result := True;
 end; //ValveData
 
@@ -803,9 +965,14 @@ end; //DoLWTEvent
 //*****************************************************************************
 procedure TForm1.bConfigClick(Sender: TObject);
 begin
-  Debug('Sending config');
+  Debug('Sending config for all entities');
   MyDevice.SendConfigAll;
 end; //Button1Click
+
+procedure TForm1.bClearLogClick(Sender: TObject);
+begin
+  Memo.Lines.Clear;
+end;
 
 procedure TForm1.bConnectClick(Sender: TObject);
 begin
@@ -1016,6 +1183,7 @@ begin
     Retain := False;
     State := False;
     Brightness := 0;
+    //OnReadData := //not used for a complex object. Better to create a descendant TMyPersonalLight with a .SendState that knows wjhat to do
     Memo.Lines.Add('New light: ' + BuildConfigJSON);
 
     //s := TopicPrefix(linBrightnessCommandTopic) + Config[CLightNames[linBrightnessCommandTopic]];
@@ -1209,6 +1377,70 @@ begin
     if not Subscribe(vnCommandTopic, Ord(subIDValveCommand)) then Debug('Error: Valve subscribe to ' + CValveNames[vnCommandTopic]);
     Memo.Lines.Add('');
   end; //With
+
+  //A Date that can be set from both ends
+  MDate := TMQTTDate.Create;
+  with MDate do begin
+    Device := MyDevice;
+    Config[CDateNames[ddUniqueId]]                := did + '_date';
+    Config[CDateNames[ddDefaultEntityId]]         := Config[CDateNames[ddPlatform]] + '.' + Config[CDateNames[ddUniqueId]];
+    Config[CDateNames[ddName]]                    := 'Date';
+    Config[CDateNames[ddCommandTopic]]            := 'set';
+    Config[CDateNames[ddStateTopic]]              := 'state';
+    QoS := 1;
+    Retain := False;
+    OnReadData := MDateData;
+    MDate.Value := Now;
+    dtpDate.Date := MDate.Value;
+    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+
+    if not Subscribe(ddCommandTopic, Ord(subIDDateCommand)) then Debug('Error: Date subscribe to ' + CDateNames[ddCommandTopic]);
+    Memo.Lines.Add('');
+  end; //With
+
+  //A DateTime that can be set from both ends
+  MDateTime := TMQTTDateTime.Create;
+  with MDateTime do begin
+    Device := MyDevice;
+    Config[CDateTimeNames[dtUniqueId]]        := did + '_datetime';
+    Config[CDateTimeNames[dtDefaultEntityId]] := Config[CDateTimeNames[dtPlatform]] + '.' + Config[CDateTimeNames[dtUniqueId]];
+    Config[CDateTimeNames[dtName]]            := 'Date/Time';
+    Config[CDateTimeNames[dtCommandTopic]]    := 'set';
+    Config[CDateTimeNames[dtStateTopic]]      := 'state';
+    //Config[CDateTimeNames[dtTimeZone]]        := 'Europe/Rome'; //https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    //if you use TimeZone the time has to be sent without the tz correction so the DateToISO8601 function is not usable
+    QoS := 1;
+    Retain := False;
+    OnReadData := MDateTimeData;
+    MDateTime.Value := Now;
+    dtpDateTime.Date := MDateTime.Value;
+    dtpDateTime.Time := MDateTime.Value;
+    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+
+    if not Subscribe(dtCommandTopic, Ord(subIDDateTimeCommand)) then Debug('Error: DateTime subscribe to ' + CDateTimeNames[dtCommandTopic]);
+    Memo.Lines.Add('');
+  end; //With
+
+  //A Time that can be set from both ends
+  MTime := TMQTTTime.Create;
+  with MTime do begin
+    Device := MyDevice;
+    Config[CTimeNames[ttUniqueId]]        := did + '_time';
+    Config[CTimeNames[ttDefaultEntityId]] := Config[CTimeNames[ttPlatform]] + '.' + Config[CTimeNames[ttUniqueId]];
+    Config[CTimeNames[ttName]]            := 'Time';
+    Config[CTimeNames[ttCommandTopic]]    := 'set';
+    Config[CTimeNames[ttStateTopic]]      := 'state';
+    Config[CTimeNames[ttIcon]]            := 'mdi:clock-outline';
+    QoS := 1;
+    Retain := False;
+    OnReadData := MTimeData;
+    MTime.Value := Now;
+    dtpTime.Time := MTime.Value;
+    Memo.Lines.Add('New sensor: ' + BuildConfigJSON);
+
+    if not Subscribe(ttCommandTopic, Ord(subIDTimeCommand)) then Debug('Error: Time subscribe to ' + CTimeNames[ttCommandTopic]);
+    Memo.Lines.Add('');
+  end; //With
 end; //CreateDevice
 
 //*****************************************************************************
@@ -1264,6 +1496,9 @@ begin
   FreeAndNil(Text);
   FreeAndNil(Update);
   FreeAndNil(Valve);
+  FreeAndNil(MDate);
+  FreeAndNil(MDateTime);
+  FreeAndNil(MTime);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -1350,6 +1585,13 @@ begin
   subIDUpdateCommand        : DoUpdateCommand(Msg.Message);
 
   subIDValveCommand         : DoValveCommand(Msg.Message);
+
+  subIDDateCommand          : DoDateValue(Msg.Message);
+
+  subIDDateTimeCommand      : DoDateTimeValue(Msg.Message);
+
+  subIDTimeCommand          : DoTimeValue(Msg.Message);
+
   else begin
       if Msg.SubsID = cfgHABirthSubId then
         DoBirthEvent(Msg.Message)

@@ -3,7 +3,7 @@ Program HADemo;
 {$MODE Delphi}
 
 Uses
-  Forms, Interfaces,
+  Forms, datetimectrls, Interfaces,
   Unit1 in 'Unit1.pas';
 
 {$R *.res}
